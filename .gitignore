@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /rain_data/
+
+
+803_anomaly_transformer_time_serie.pdf
