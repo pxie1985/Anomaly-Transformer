@@ -190,6 +190,7 @@ class Solver(object):
                 loss2.backward()
                 self.optimizer.step()
 
+
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(loss1_list)
 
@@ -247,7 +248,7 @@ class Solver(object):
             attens_energy.append(cri)
 
         attens_energy = np.concatenate(attens_energy, axis=0).reshape(-1)
-        train_energy = np.array(attens_energy)
+        train_energy = np.array(attens_energy) # (num_train,)
 
         # (2) find the threshold
         attens_energy = []

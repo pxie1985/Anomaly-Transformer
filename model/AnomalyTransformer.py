@@ -28,7 +28,7 @@ class EncoderLayer(nn.Module):
         y = self.dropout(self.activation(self.conv1(y.transpose(-1, 1))))
         y = self.dropout(self.conv2(y).transpose(-1, 1))
 
-        return self.norm2(x + y), attn, mask, sigma
+        return self.norm2(x + y), attn, mask, sigma # B L D
 
 
 class Encoder(nn.Module):
@@ -57,6 +57,8 @@ class Encoder(nn.Module):
 class AnomalyTransformer(nn.Module):
     def __init__(self, win_size, enc_in, c_out, d_model=512, n_heads=8, e_layers=3, d_ff=512,
                  dropout=0.0, activation='gelu', output_attention=True):
+        # enc_in: input channel
+        # c_out: output channel
         super(AnomalyTransformer, self).__init__()
         self.output_attention = output_attention
 
@@ -83,7 +85,7 @@ class AnomalyTransformer(nn.Module):
 
     def forward(self, x):
         enc_out = self.embedding(x)
-        enc_out, series, prior, sigmas = self.encoder(enc_out)
+        enc_out, series, prior, sigmas = self.encoder(enc_out) # [B, L, D]
         enc_out = self.projection(enc_out)
 
         if self.output_attention:

@@ -8,6 +8,13 @@ import os
 
 
 class TriangularCausalMask():
+    # Mask for Transformer. This is used to mask out the attention weights for future time steps.
+    # This is used in the encoder and decoder.
+    # The mask is a tensor of shape [B, 1, L, L] where B is the batch size, L is the sequence length.
+    # The mask is broadcasted to the attention weights, which are of shape [B, n_heads, L, L].
+    # The mask is applied to the attention weights as follows:
+    # attention_weights = attention_weights.masked_fill(mask, -1e9)
+
     def __init__(self, B, L, device="cpu"):
         mask_shape = [B, 1, L, L]
         with torch.no_grad():
@@ -32,7 +39,14 @@ class AnomalyAttention(nn.Module):
                 self.distances[i][j] = abs(i - j)
 
     def forward(self, queries, keys, values, sigma, attn_mask):
-        B, L, H, E = queries.shape
+        # queries: [B, L, H, E]
+        # B is the batch size
+        # L is the sequence length
+        # H is the number of heads
+        # E is the dimension of the embedding
+        # S is the sequence length of the values
+        # D is the dimension of the values
+        B, L, H, E = queries.shape #
         _, S, _, D = values.shape
         scale = self.scale or 1. / sqrt(E)
 
@@ -45,7 +59,7 @@ class AnomalyAttention(nn.Module):
 
         sigma = sigma.transpose(1, 2)  # B L H ->  B H L
         window_size = attn.shape[-1]
-        sigma = torch.sigmoid(sigma * 5) + 1e-5
+        sigma = torch.sigmoid(sigma * 5) + 1e-5 # B H L
         sigma = torch.pow(3, sigma) - 1
         sigma = sigma.unsqueeze(-1).repeat(1, 1, 1, window_size)  # B H L L
         prior = self.distances.unsqueeze(0).unsqueeze(0).repeat(sigma.shape[0], sigma.shape[1], 1, 1).cuda()
@@ -82,6 +96,9 @@ class AttentionLayer(nn.Module):
         self.n_heads = n_heads
 
     def forward(self, queries, keys, values, attn_mask):
+        # queries: [B, L, E]
+        # keys: [B, S, E]
+        # values: [B, S, E]
         B, L, _ = queries.shape
         _, S, _ = keys.shape
         H = self.n_heads
