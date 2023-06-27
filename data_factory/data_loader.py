@@ -222,7 +222,7 @@ class RainLoader(object):
         self.train = data
         self.val = self.test
 
-        self.test_labels = pd.read_csv(data_path + '/test_label.csv').values[:, 1:]
+        self.test_labels = pd.read_csv(data_path + '/test_label.csv').values[:, 3:]
 
         print("test:", self.test.shape)
         print("train:", self.train.shape)
