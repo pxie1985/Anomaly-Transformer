@@ -199,14 +199,14 @@ class SMDSegLoader(object):
                 self.test_labels[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size])
 
 
-class RainLoader(object):
+class SmartCoverLoader(object):
     def __init__(self, data_path, win_size, step, mode="train"):
         self.mode = mode
         self.step = step
         self.win_size = win_size
         self.scaler = StandardScaler()
         data = pd.read_csv(data_path + '/train_data.csv')
-        data = data.values[:, 3:] # 去掉前三列
+        data = data.values[:, 1:] # 去掉前三列
 
         data = np.nan_to_num(data) # 将nan转换为0
 
@@ -214,7 +214,7 @@ class RainLoader(object):
         data = self.scaler.transform(data) # 标准化
         test_data = pd.read_csv(data_path + '/test_data.csv')
 
-        test_data = test_data.values[:, 3:] # 去掉第一列
+        test_data = test_data.values[:, 1:] # 去掉第一列
         test_data = np.nan_to_num(test_data) # 将nan转换为0
 
         self.test = self.scaler.transform(test_data)
@@ -222,7 +222,7 @@ class RainLoader(object):
         self.train = data
         self.val = self.test
 
-        self.test_labels = pd.read_csv(data_path + '/test_label.csv').values[:, 3:]
+        self.test_labels = pd.read_csv(data_path + '/test_label.csv').values[:, 1:]
 
         print("test:", self.test.shape)
         print("train:", self.train.shape)
@@ -264,8 +264,8 @@ def get_loader_segment(data_path, batch_size, win_size=100, step=100, mode='trai
         dataset = SMAPSegLoader(data_path, win_size, 1, mode)
     elif (dataset == 'PSM'):
         dataset = PSMSegLoader(data_path, win_size, 1, mode)
-    elif (dataset == 'Rain'):
-        dataset = RainLoader(data_path, win_size, 1, mode)
+    elif (dataset == 'SmartCover'):
+        dataset = SmartCoverLoader(data_path, win_size, 1, mode)
 
     shuffle = False
     if mode == 'train':
