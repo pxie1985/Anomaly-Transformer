@@ -7,10 +7,12 @@ sc_df = pd.read_csv(sc_csv)
 sc_df = sc_df[sc_df['SiteID'] == 33214]
 
 #resample the data to 10 minutes
-sc_df['Timestamp'] = pd.to_datetime(sc_df['Timestamp'])
 sc_df = sc_df.set_index('Timestamp')
+#parse the timestamp column to datetime
+sc_df.index = pd.to_datetime(sc_df.index)
+
 sc_df = sc_df.resample('10T').mean()
-sc_df = sc_df.reset_index()
+
 
 #remove the SiteID column
 sc_df = sc_df.drop(['SiteID'], axis=1)
@@ -18,6 +20,26 @@ sc_df = sc_df.drop(['SiteID'], axis=1)
 #fill the missing values with the forward fill method and backward fill method
 sc_df = sc_df.fillna(method='ffill')
 sc_df = sc_df.fillna(method='bfill')
+
+
+#read the rain data
+rain_csv = r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\rain_for_model.csv'
+rain_df = pd.read_csv(rain_csv)
+#parse the timestamp column to datetime
+rain_df['Timestamp'] = pd.to_datetime(rain_df['Timestamp'])
+#drop the GaugeID column
+rain_df = rain_df.drop(['GaugeID'], axis=1)
+#set the timestamp column as index
+rain_df = rain_df.set_index('Timestamp')
+
+#join the rain data with the smart cover data
+sc_df = sc_df.join(rain_df, how='left')
+#fill the missing values with the forward fill method and backward fill method
+sc_df = sc_df.fillna(method='ffill')
+sc_df = sc_df.fillna(method='bfill')
+#reset the index
+sc_df = sc_df.reset_index()
+
 
 #making the first 0.8 as training data and the rest as test data
 sc_df['Label'] = 0
@@ -35,5 +57,18 @@ sc_df_test = sc_df_test.drop(['Label'], axis=1)
 sc_df_train.to_csv(r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\SmartCover_train_33214.csv', index=False)
 sc_df_test.to_csv(r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\SmartCover_test_33214.csv', index=False)
 
+
+#plot the sc_df with plotly
+import plotly.graph_objects as go
+import plotly.express as px
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=sc_df_train['Timestamp'], y=sc_df_train['Level'],
+                    mode='lines',
+                    name='lines'))
+fig.show()
+
+fig = px.line(sc_df_train, x='Timestamp', y='level')
+fig.show()
 
 
