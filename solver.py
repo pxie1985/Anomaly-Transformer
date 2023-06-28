@@ -335,7 +335,7 @@ class Solver(object):
         import pandas as pd
         # add column to test_labels as pred and save to csv
         df = pd.DataFrame(pred)
-        df.to_csv(os.path.join(str(self.result_save_path), str(self.dataset) + 'pred.csv'))
+        df.to_csv(os.path.join(str(self.result_save_path), str(self.dataset) + '_pred.csv'))
 
         gt = test_labels.astype(int)
 
