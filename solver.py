@@ -331,6 +331,12 @@ class Solver(object):
 
         pred = (test_energy > thresh).astype(int)
 
+        #save the pred to csv
+        import pandas as pd
+        # add column to test_labels as pred and save to csv
+        df = pd.DataFrame(pred)
+        df.to_csv(os.path.join(str(self.result_save_path), str(self.dataset) + 'pred.csv'))
+
         gt = test_labels.astype(int)
 
         print("pred:   ", pred.shape)
