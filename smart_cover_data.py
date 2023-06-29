@@ -21,6 +21,13 @@ sc_df = sc_df.drop(['SiteID'], axis=1)
 sc_df = sc_df.fillna(method='ffill')
 sc_df = sc_df.fillna(method='bfill')
 
+#create columns to indicate the day of the week and the hour of the day, month of the year and year
+sc_df['day_of_week'] = sc_df.index.dayofweek
+sc_df['hour_of_day'] = sc_df.index.hour
+sc_df['month_of_year'] = sc_df.index.month
+sc_df['year'] = sc_df.index.year
+
+
 
 #read the rain data
 rain_csv = r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\rain_for_model.csv'

@@ -333,9 +333,7 @@ class Solver(object):
 
         #save the pred to csv
         import pandas as pd
-        # add column to test_labels as pred and save to csv
-        df = pd.DataFrame(pred)
-        df.to_csv(os.path.join(str(self.result_save_path), str(self.dataset) + '_pred.csv'))
+
 
         gt = test_labels.astype(int)
 
@@ -368,6 +366,12 @@ class Solver(object):
         gt = np.array(gt)
         print("pred: ", pred.shape)
         print("gt:   ", gt.shape)
+
+        # add column to test_labels as pred and save to csv
+        df = pd.DataFrame(pred)
+        if not os.path.exists(self.result_save_path):
+            os.makedirs(self.result_save_path)
+        df.to_csv(os.path.join(str(self.result_save_path), str(self.dataset) + '_pred.csv'))
 
         from sklearn.metrics import precision_recall_fscore_support
         from sklearn.metrics import accuracy_score
