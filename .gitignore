@@ -133,3 +133,5 @@ dmypy.json
 803_anomaly_transformer_time_serie.pdf
 /data/
 /checkpoints/
+/data_for_model/test_data_with_pred.csv
+/results.pptx

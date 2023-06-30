@@ -11,7 +11,8 @@ sc_df = sc_df.set_index('Timestamp')
 #parse the timestamp column to datetime
 sc_df.index = pd.to_datetime(sc_df.index)
 
-sc_df = sc_df.resample('10T').mean()
+#resample the data to 1 hour
+sc_df = sc_df.resample('1H').mean()
 
 
 #remove the SiteID column
@@ -39,6 +40,9 @@ rain_df = rain_df.drop(['GaugeID'], axis=1)
 #set the timestamp column as index
 rain_df = rain_df.set_index('Timestamp')
 
+#resample the data to 1 hour
+rain_df = rain_df.resample('1H').sum()
+
 #join the rain data with the smart cover data
 sc_df = sc_df.join(rain_df, how='left')
 #fill the missing values with the forward fill method and backward fill method
@@ -61,8 +65,8 @@ sc_df_train = sc_df_train.drop(['Label'], axis=1)
 sc_df_test = sc_df_test.drop(['Label'], axis=1)
 
 #expoert the train and test data
-sc_df_train.to_csv(r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\SmartCover_train_33214.csv', index=False)
-sc_df_test.to_csv(r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\SmartCover_test_33214.csv', index=False)
+sc_df_train.to_csv(r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\hourly\SmartCover_train_33214_hourly.csv', index=False)
+sc_df_test.to_csv(r'C:\Users\C21252\PycharmProjects\Anomaly_Attention\Data\Smart_cover\hourly\SmartCover_test_33214_hourly.csv', index=False)
 
 
 #plot the sc_df with plotly

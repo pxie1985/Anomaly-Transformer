@@ -6,12 +6,8 @@ import plotly.graph_objects as go
 
 
 
-
-
-
-
 # read the csv file into a pandas dataframe
-df = pd.read_csv('data_for_model/train_data.csv')
+df = pd.read_csv('data_for_model/test_data_with_pred.csv')
 #convert the column of timestamps to datetime objects
 df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 #set the index of the dataframe to be the column of timestamps
@@ -32,12 +28,15 @@ fig.add_trace(go.Scatter(x=df.index, y=df['Rain'], mode='lines', name='Rain', ya
 fig.update_layout(yaxis2=dict(title='Rain', overlaying='y', side='right'))
 
 
+#highlight the anomalies in the plot, where pred =1, making the points red and bigger
+fig.add_trace(go.Scatter(x=df[df['pred'] == 1].index, y=df[df['pred'] == 1]['Level'], mode='markers', marker=dict(color='Red', size=10), name='Anomaly'))
+
 
 #starting from each pred =1 point, draw a vertical rectangular whose width is about 100 data points and heigh is infinite
 #this is to show the time period of each anomaly
-# for i in range(len(df)):
-#     if df['pred'][i] == 1:
-#         fig.add_shape(type='rect', x0=df.index[i], y0=-1, x1=df.index[i+100], y1=1, line=dict(color='Red', width=2), fillcolor='Red', opacity=0.2)
+for i in range(len(df)):
+    if df['pred'][i] == 1:
+        fig.add_shape(type='rect', x0=df.index[i], y0=-1, x1=df.index[i+100], y1=1, line=dict(color='Red', width=2), fillcolor='Red', opacity=0.2)
 
 
 
